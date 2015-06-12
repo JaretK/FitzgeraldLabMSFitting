@@ -40,8 +40,9 @@ except IndexError:
 ##-------------------------------------------
 
 denaturantsArray = csvReader(denatsFile).getHeader()
+numberDenaturants = len(denaturantsArray)
 #Populate data array with data from csv input file
-data = DataArray(filepath, len(denaturantsArray))
+data = DataArray(filepath,numberDenaturants)
 
 #Set up denaturant concentrations from denatsFile (sys.argv[2]
 data.setDenConcs(denaturantsArray)
@@ -245,15 +246,15 @@ if runFigs:
         if numberToView == -1:
             raise SystemExit
         print "Drawing Fig"+str(numberToView)+".png"
-        plottedYData = [float(x) for x in allattempts[numberToView - 2][4:12]]
-        A = float(allattempts[numberToView-2][12])
-        B = float(allattempts[numberToView-2][13])
-        m_val = float(allattempts[numberToView-2][16])
+        plottedYData = [float(x) for x in allattempts[numberToView - 2][4:4+numberDenaturants]]
+        A = float(allattempts[numberToView-2][4+numberDenaturants])
+        B = float(allattempts[numberToView-2][5+numberDenaturants])
+        m_val = float(allattempts[numberToView-2][8+numberDenaturants])
         plottedXData = np.linspace(xdata[0], xdata[-1], num = 100) 
-        params = (float(allattempts[numberToView-2][14]), m_val)
-        chalf_val = float(allattempts[numberToView-2][18])
+        params = (float(allattempts[numberToView-2][6+numberDenaturants]), m_val)
+        chalf_val = float(allattempts[numberToView-2][10+numberDenaturants])
              
-        ylim =[min(plottedYData)*0.9, max(plottedYData)*1.1]
+        ylim =[min(plottedYData)*0.8, max(plottedYData)*1.2]
         fittedModel = makeModel(plottedXData,*params)
         chalfModel= makeChalfModel(plottedXData, float(chalf_val), float(b_val))
              
