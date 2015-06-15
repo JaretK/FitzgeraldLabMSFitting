@@ -15,18 +15,19 @@ For manually fitting small data sets
 """
 midpointTolerance = 0.1
 #denaturant concentrations
-xdataString = "0    0.5    0.76    1    1.15    1.3    1.5    1.69    1.86    2.02    2.24    2.5    2.75    3    3.5    4.02"
+xdataString = "0.5    1      1.7    2    2.5    3    4"
 xdata = [float(x) for x in xdataString.split()]
 #reporter intensities
-ydataString = "1.341438002    1.394850112    1.429945385    1.522899086    1.157608863    1.37434698    1.165139505    1.290643078    1.007944623    1.116215979    0.894331838    0.583738376    0.48835032    0.172021421    0.303118458    0.194933933"
+ydataString = "1.197490153    1.24113578       1.314496603    1.369742856    0.769925538    0.857576246    0.910579677"
 ydata = [float(y) for y in ydataString.split()]
 
 if len(xdata) != len(ydata):
     print "ERROR: vectors not compatible, dimensions not equal"
     raise SystemError
 
-A = ydata[0]
-B = ydata[len(ydata)-1]  
+A = max(ydata)
+B = min(ydata) 
+
 
 #Changes the intensities based on the midpointTolerance. To not change intensities, return 
 def alterIntensities(intensities):
@@ -63,7 +64,7 @@ def makeModel(x, dGf, m):
     Kfold = 1+np.exp(-(dGf + np.multiply(m, x))/RT)
     return B+(A-B)*np.exp(-(kox*t)/Kfold)
 
-def makeChalfModel(x, chalf, b):
+def makeChalfModel(x, chalf, b, A, B):
     #b = 0.592154/float(m_val)
     return A + (B-A)/(1+np.exp(-(x-chalf)/(b)))
 
@@ -92,7 +93,7 @@ except RuntimeError:
     print "Max recursion depth exceeded on c_half"
 if not isinstance(ch_cov, np.ndarray):
     print "Covariance matrix is INF on c_half"
-
+ 
 chalf_val = str(ch[0])
 chalf_err = str(np.sqrt(np.diag(ch_cov))[0])
 b_val = str(ch[1])
@@ -110,8 +111,8 @@ fittedModel = makeModel(plottedXData, float(dGf_val), float(m_val))
 chalfModel= makeChalfModel(plottedXData, float(chalf_val), float(b_val))
 plt.figure()
 plt.scatter(xdata, ydata, label = "Data", marker = 'o', alpha = 0.5)
-plt.plot(plottedXData, fittedModel ,"r",label = "fitted model")
-plt.plot(plottedXData, chalfModel, "g", label = "C 1/2 Model")
+plt.plot(plottedXData, fittedModel ,"r",label = "dGf, m model")
+plt.plot(plottedXData, chalfModel, "g", label = "C 1/2, b Model")
 plt.legend()
 plt.ylim(ylim)
 plt.show()

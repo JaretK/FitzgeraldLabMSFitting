@@ -24,6 +24,7 @@ filepath = sys.argv[1]
 denatsFile = sys.argv[2]
 pictureFolder = figuresFileName(filepath)
 fw = FileWriter(filepath, customFileName="")
+##-------------------------------------------
 
 #If a third argument is passed, generate figures
 #Figure generation is slow, so it is often optimal to disregard generation
@@ -37,7 +38,7 @@ try:
         os.makedirs(pictureFolder)
 except IndexError:
     pass
-##-------------------------------------------
+
 
 denaturantsArray = csvReader(denatsFile).getHeader()
 numberDenaturants = len(denaturantsArray)
@@ -99,8 +100,9 @@ for i in range(data.size):
     rtmin = str(data.data[i].control.rtmin)
     #A = ydata[0]
     #B = ydata[len(ydata)-1]
+    
     A = max(ydata)
-    B = min(ydata)  
+    B = min(ydata) 
     ydata = alterIntensities(ydata)
     
     message = [sequence, protein, score, rtmin]
@@ -261,8 +263,8 @@ if runFigs:
         plt.figure()
         plt.title(allattempts[numberToView-2][0])
         plt.scatter(xdata, plottedYData, label = "Data", marker = 'o', alpha = 0.5)
-        plt.plot(plottedXData, fittedModel ,"r",label = "fitted model")
-        plt.plot(plottedXData, chalfModel, "g", label = "C 1/2 Model")
+        plt.plot(plottedXData, fittedModel ,"r",label = "dGf, m model")
+        plt.plot(plottedXData, chalfModel, "g", label = "C 1/2, b Model")
         plt.legend()
         plt.ylim(ylim)
         plt.savefig(pictureFolder +"Fig"+str(numberToView)+".png",bbox_inches='tight')
